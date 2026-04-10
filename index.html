@@ -157,6 +157,7 @@
     .btn-pill-white {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 8px;
       padding: 10px 22px;
       border-radius: 9999px;
@@ -1935,6 +1936,13 @@
       .feat-icon-cell {
         padding: 24px 20px;
       }
+      /* corrigir bordas para grid 2 colunas */
+      .feat-icon-cell:nth-child(1) { border-radius: 16px 0 0 0; }
+      .feat-icon-cell:nth-child(2) { border-radius: 0 16px 0 0; }
+      .feat-icon-cell:nth-child(3) { border-radius: 0; }
+      .feat-icon-cell:nth-child(4) { border-radius: 0; }
+      .feat-icon-cell:nth-child(5) { border-radius: 0 0 0 16px; }
+      .feat-icon-cell:nth-child(6) { border-radius: 0 0 16px 0; }
 
       /* ── FAQ ── */
       .section-faq {
@@ -1951,8 +1959,15 @@
       }
       .cta-btns {
         flex-direction: column;
-        align-items: center;
+        align-items: stretch;
         gap: 10px;
+        width: 100%;
+        max-width: 320px;
+        margin: 0 auto;
+      }
+      .cta-btns .btn-pill-dark {
+        text-align: center;
+        justify-content: center;
       }
       .cta-heading {
         font-size: clamp(28px, 7vw, 48px) !important;
@@ -1971,10 +1986,9 @@
         font-size: clamp(26px, 7vw, 40px);
       }
       .orbit-stage {
-        width: 300px;
-        height: 300px;
-        overflow: hidden;
-        margin: 0 auto;
+        transform: scale(0.78);
+        transform-origin: center center;
+        margin: -42px auto;
       }
 
       /* ── Footer ── */
@@ -2595,10 +2609,6 @@
 
     <div class="footer-bottom">
       <span>© 2026 Fin APP. Todos os direitos reservados.</span>
-      <div class="footer-sep"></div>
-      <a href="#">Feito com ❤️ no Brasil</a>
-      <div class="footer-sep"></div>
-      <a href="#">Contato</a>
     </div>
   </div>
 </footer>

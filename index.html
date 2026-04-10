@@ -154,15 +154,9 @@
     }
 
     /* ─── RAINBOW BUTTON ────────────────────────────────── */
-    @keyframes rainbow-spin {
-      from { --rb-angle: 0deg; }
-      to   { --rb-angle: 360deg; }
-    }
-
-    @property --rb-angle {
-      syntax: '<angle>';
-      inherits: false;
-      initial-value: 0deg;
+    @keyframes rainbow {
+      0%   { background-position: 0%; }
+      100% { background-position: 200%; }
     }
 
     .btn-pill-white {
@@ -176,7 +170,7 @@
       font-size: 14px;
       font-weight: 600;
       font-family: var(--font);
-      border: none;
+      border: 1px solid rgba(0,0,0,0.06);
       cursor: pointer;
       white-space: nowrap;
       position: relative;
@@ -187,23 +181,21 @@
     .btn-pill-white::before {
       content: '';
       position: absolute;
-      inset: -2px;
+      inset: -2px -3px -6px -3px;
       border-radius: 9999px;
-      background: conic-gradient(
-        from var(--rb-angle),
-        #ff6b6b, #ffa94d, #ffd43b, #69db7c,
-        #74c0fc, #9775fa, #f783ac, #ff6b6b
+      background: linear-gradient(
+        90deg,
+        hsl(0 100% 63%),
+        hsl(270 100% 63%),
+        hsl(210 100% 63%),
+        hsl(195 100% 63%),
+        hsl(90 100% 63%),
+        hsl(0 100% 63%)
       );
-      animation: rainbow-spin 3s linear infinite;
-      z-index: -1;
-    }
-
-    .btn-pill-white::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 9999px;
-      background: #fff;
+      background-size: 200%;
+      animation: rainbow 2s linear infinite;
+      filter: blur(8px);
+      opacity: 0.6;
       z-index: -1;
     }
 

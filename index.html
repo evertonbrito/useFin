@@ -1,0 +1,2547 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fin — Assistente financeiro com IA para organizar seus gastos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Source+Serif+4:ital,wght@1,500&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ─── HERO ENTRANCE ──────────────────────────────── */
+    @keyframes h-rise {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes h-rise-blur {
+      from { opacity: 0; transform: translateY(16px); filter: blur(8px); }
+      to   { opacity: 1; transform: translateY(0);    filter: blur(0); }
+    }
+    @keyframes h-badge {
+      from { opacity: 0; transform: translateY(10px) scale(0.95); }
+      to   { opacity: 1; transform: translateY(0)    scale(1); }
+    }
+
+    .hero-badge-wrap {
+      animation: h-badge 0.7s cubic-bezier(0.16,1,0.3,1) 0.1s both;
+    }
+    .hero-headline {
+      animation: h-rise-blur 1s cubic-bezier(0.16,1,0.3,1) 0.28s both;
+    }
+    .hero-sub {
+      animation: h-rise 0.8s cubic-bezier(0.16,1,0.3,1) 0.52s both;
+    }
+    .hero-ctas {
+      animation: h-rise 0.7s cubic-bezier(0.16,1,0.3,1) 0.7s both;
+    }
+
+    /* Section spacing handled by each section's padding */
+
+    /* ── Section entrance ── */
+    section:not(.hero) {
+      opacity: 0;
+      transform: translateY(36px);
+      transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1),
+                  transform 0.9s cubic-bezier(0.16,1,0.3,1);
+    }
+    section:not(.hero).sec-in {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    :root {
+      --bg: #000;
+      --text: #f9f9f9;
+      --text-dim: rgba(255,255,255,0.8);
+      --text-muted: rgba(255,255,255,0.35);
+      --border: rgba(26,26,26,1);
+      --border-subtle: rgba(255,255,255,0.08);
+      --font: 'Geist', system-ui, sans-serif;
+      --serif: 'Source Serif 4', Georgia, serif;
+      --logo-font: 'Space Grotesk', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+
+    .container {
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+
+    /* ─── NAVBAR ─────────────────────────────────────────── */
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      height: 72px;
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--logo-font);
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.01em;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* 4-square grid icon (2×2 white squares) */
+    .logo-icon {
+      width: 19px;
+      height: 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 1px;
+    }
+
+    .logo-icon span {
+      background: #fff;
+      border-radius: 1px;
+    }
+
+    .nav-links-pill {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 4px;
+      border-radius: 64px;
+    }
+
+    .nav-links-pill a {
+      padding: 6px 16px;
+      border-radius: 64px;
+      font-size: 14px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.7);
+      transition: color 0.2s, background 0.2s;
+    }
+
+    .nav-links-pill a:hover {
+      color: var(--text);
+      background: rgba(255,255,255,0.06);
+    }
+
+    /* White pill CTA button */
+    .btn-pill-white {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 22px;
+      border-radius: 9999px;
+      background: #fff;
+      color: #111;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: var(--font);
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      white-space: nowrap;
+    }
+    .btn-pill-white:hover { opacity: 0.88; }
+
+    .btn-pill-dark {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 22px;
+      border-radius: 9999px;
+      background: rgba(255,255,255,0.1);
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 600;
+      font-family: var(--font);
+      border: 1px solid rgba(255,255,255,0.15);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-pill-dark:hover { background: rgba(255,255,255,0.15); }
+
+    .btn-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+      transition: opacity 0.2s;
+    }
+    .btn-link:hover { opacity: 0.6; }
+
+    .btn-link-sm {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      padding: 10px 20px;
+      border-radius: 9999px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.05);
+      transition: background 0.2s;
+      align-self: flex-start;
+    }
+    .btn-link-sm:hover { background: rgba(255,255,255,0.1); }
+
+    /* ─── HERO ───────────────────────────────────────────── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: #080808;
+    }
+
+    /* Video background */
+    .hero-canvas {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .hero-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    /* Dark overlay + bottom fade into next section */
+    .hero-canvas::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.3)  0%,
+        rgba(0,0,0,0.15) 35%,
+        rgba(0,0,0,0.15) 50%,
+        rgba(0,0,0,0.55) 72%,
+        rgba(0,0,0,0.85) 85%,
+        #000             100%
+      );
+    }
+
+    /* Extra bottom fade element for a seamless blend */
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 220px;
+      background: linear-gradient(to bottom, transparent, #000);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 0 40px;
+      padding-top: 80px;
+      max-width: 900px;
+    }
+
+    .hero-badge-wrap {
+      position: relative;
+      display: inline-flex;
+      border-radius: 9999px;
+      padding: 1.5px;
+      margin-bottom: 32px;
+      overflow: hidden;
+    }
+    .hero-badge-wrap::before {
+      content: '';
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      top: -50%;
+      left: -50%;
+      background: conic-gradient(
+        from 0deg,
+        transparent 0deg,
+        transparent 140deg,
+        rgba(167,139,250,0) 170deg,
+        rgba(167,139,250,0.9) 205deg,
+        rgba(56,189,248,1) 230deg,
+        rgba(52,211,153,0.9) 255deg,
+        rgba(52,211,153,0) 290deg,
+        transparent 320deg,
+        transparent 360deg
+      );
+      animation: ai-border-spin 3.2s linear infinite;
+      filter: blur(1.5px);
+    }
+    @keyframes ai-border-spin {
+      to { transform: rotate(360deg); }
+    }
+    .hero-badge {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 14px 5px 10px;
+      border-radius: 9999px;
+      background: #0d0d0d;
+      font-size: 14px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.8);
+      z-index: 1;
+    }
+
+    .hero-badge-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .hero-headline {
+      font-size: clamp(40px, 5.2vw, 64px);
+      font-weight: 500;
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+      color: #f9f9f9;
+      margin-bottom: 24px;
+    }
+
+    .hero-headline em {
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 500;
+    }
+
+    .hero-sub {
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--text-dim);
+      max-width: 520px;
+      margin: 0 auto 40px;
+      line-height: 1.6;
+    }
+
+    .hero-ctas {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    /* ─── ABOUT ──────────────────────────────────────────── */
+    .section-about {
+      padding: 156px 0;
+      background: #000;
+    }
+
+    .about-inner {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+
+    .about-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      margin-bottom: 48px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .about-label::before {
+      content: '';
+      width: 20px;
+      height: 1px;
+      background: rgba(255,255,255,0.2);
+    }
+
+    /* Word-reveal animation on scroll */
+    .about-text {
+      font-size: clamp(22px, 2.8vw, 36px);
+      font-weight: 500;
+      line-height: 1.5;
+      color: var(--text);
+    }
+
+    .word {
+      display: inline;
+    }
+
+    .word.dim {
+      color: rgba(255,255,255,0.2);
+      transition: color 0.4s;
+    }
+
+    /* ─── FEATURES ILLUSTRATIONS ─────────────────────────── */
+    .section-feat-illus {
+      padding: 156px 0;
+      background: #000;
+    }
+
+    .feat-illus-heading {
+      font-size: clamp(28px, 3.5vw, 48px);
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 56px;
+      max-width: 900px;
+      text-align: center;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Single container with 3 columns separated by dividers */
+    .feat-illus-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .feat-illus-item {
+      position: relative;
+      padding: 40px 40px 36px;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      background: #000;
+      transition: background 0.4s ease;
+      cursor: default;
+    }
+
+    .feat-illus-item:last-child { border-right: none; }
+
+    .feat-illus-item:hover { background: #111; }
+
+    .feat-illus-icon {
+      width: 100%;
+      height: 152px;
+      margin-bottom: 28px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Mini UI illustrations ──────────────────────── */
+    .fi-card {
+      background: #0c0c0c;
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 12px;
+      padding: 16px 18px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .fi-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.38);
+      margin-bottom: 3px;
+    }
+    .fi-amount {
+      font-size: 19px;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      color: #fff;
+      line-height: 1.1;
+    }
+    .fi-progress-track {
+      height: 5px;
+      background: rgba(255,255,255,0.07);
+      border-radius: 99px;
+      overflow: hidden;
+      margin: 0;
+    }
+    .fi-progress-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(to right, #fb923c 0%, #38bdf8 48%, #818cf8 100%);
+      transition: width 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .fi-util { font-size: 11px; color: rgba(255,255,255,0.32); }
+
+    /* Insights — notification style */
+    .fi-insights { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    .fi-insight {
+      display: flex; align-items: center; gap: 12px;
+      background: #0c0c0c;
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 12px;
+      padding: 12px 14px;
+      flex: 1;
+    }
+    .fi-notif-icon {
+      width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .fi-notif-icon svg {
+      width: 18px; height: 18px;
+      stroke: rgba(255,255,255,0.92); fill: none;
+      stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;
+    }
+    .fi-notif-purple { background: #4f46e5; }
+    .fi-notif-blue   { background: #0284c7; }
+    .fi-notif-body { flex: 1; min-width: 0; }
+    .fi-notif-header {
+      display: flex; align-items: center; gap: 6px;
+      margin-bottom: 2px;
+    }
+    .fi-notif-title {
+      font-size: 12.5px; font-weight: 600;
+      color: rgba(255,255,255,0.92);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .fi-notif-dot { color: rgba(255,255,255,0.2); font-size: 11px; }
+    .fi-notif-time { font-size: 11px; color: rgba(255,255,255,0.3); white-space: nowrap; }
+    .fi-notif-desc { font-size: 11.5px; color: rgba(255,255,255,0.45); line-height: 1.4; }
+
+    /* ── Notification entrance animation ── */
+    .fi-insight {
+      opacity: 0;
+      transform: translateY(12px) scale(0.98);
+      transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .fi-insight.notif-in {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    /* Categories */
+    .fi-cats-wrap { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    .fi-cats-card {
+      background: #0c0c0c;
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 12px;
+      padding: 12px 14px;
+      flex: 1;
+      display: flex; flex-direction: column; justify-content: center;
+      opacity: 0;
+      transform: translateY(12px) scale(0.98);
+      transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .fi-cats-card.cat-in {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    .fi-cat-row { display: flex; align-items: center; gap: 12px; }
+    .fi-cat-badge {
+      width: 36px; height: 36px; border-radius: 9px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .fi-cat-badge svg {
+      width: 17px; height: 17px;
+      stroke: rgba(255,255,255,0.9); fill: none;
+      stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;
+    }
+    .fi-green { background: #15803d; }
+    .fi-amber { background: #92400e; }
+    .fi-cat-body { flex: 1; min-width: 0; }
+    .fi-cat-name {
+      font-size: 12.5px; font-weight: 500;
+      color: rgba(255,255,255,0.85); margin-bottom: 6px;
+    }
+    .fi-cat-amounts {
+      display: flex; justify-content: space-between;
+      font-size: 11px; color: rgba(255,255,255,0.35);
+      margin-top: 5px;
+    }
+    .fi-bar-indigo {
+      background: #818cf8;
+    }
+
+    .feat-illus-title {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    .feat-illus-desc {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--text-dim);
+      line-height: 1.6;
+      flex: 1;
+      margin-bottom: 32px;
+    }
+
+    /* ─── WALKTHROUGH ────────────────────────────────────── */
+    .section-walkthrough {
+      padding: 100px 0 140px;
+      background: #000;
+    }
+
+    .wt-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      padding: 72px 0;
+    }
+
+    .wt-pair + .wt-pair {
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .wt-pair--flip .wt-illus { order: -1; }
+
+    .wt-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .wt-item-title {
+      font-size: clamp(28px, 3vw, 44px);
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 20px;
+      color: var(--text);
+    }
+
+    .wt-item-desc {
+      font-size: 17px;
+      font-weight: 400;
+      color: var(--text-dim);
+      line-height: 1.65;
+    }
+
+    .wt-illus {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .wt-illus-frame {
+      width: 100%;
+      background: #080808;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 20px;
+      overflow: hidden;
+      min-height: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    /* ── Chat illustration ─────────────────────────── */
+    .wt-chat {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 32px 28px;
+      gap: 12px;
+    }
+    /* Main input card — animated border */
+    .wt-chat-box-wrap {
+      position: relative;
+      border-radius: 16px;
+      padding: 1.5px;
+      overflow: hidden;
+    }
+    .wt-chat-box-wrap::before {
+      content: '';
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      top: -50%;
+      left: -50%;
+      background: conic-gradient(
+        from 0deg,
+        transparent 0deg,
+        transparent 140deg,
+        rgba(167,139,250,0) 170deg,
+        rgba(167,139,250,0.9) 205deg,
+        rgba(56,189,248,1) 230deg,
+        rgba(52,211,153,0.9) 255deg,
+        rgba(52,211,153,0) 290deg,
+        transparent 320deg,
+        transparent 360deg
+      );
+      animation: ai-border-spin 3.2s linear infinite;
+      filter: blur(1.5px);
+    }
+    .wt-chat-box {
+      position: relative;
+      background: #0d0d0d;
+      border-radius: 14px;
+      overflow: hidden;
+      z-index: 1;
+    }
+    .wt-chat-area {
+      padding: 18px 18px 14px;
+      min-height: 76px;
+    }
+    .wt-chat-placeholder {
+      font-size: 13.5px;
+      color: rgba(255,255,255,0.28);
+    }
+    .wt-chat-typed {
+      font-size: 13.5px;
+      color: rgba(255,255,255,0.82);
+      overflow: hidden;
+      white-space: nowrap;
+      width: 0;
+      animation: wt-type 1.6s steps(28, end) 0.6s forwards;
+    }
+    .wt-chat-typed::after {
+      content: '|';
+      color: #6366f1;
+      animation: cur-blink 1s step-end infinite;
+    }
+    @keyframes wt-type { to { width: 100%; } }
+    @keyframes cur-blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    .wt-chat-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      gap: 8px;
+    }
+    .wt-chat-left { display: flex; align-items: center; gap: 8px; }
+    .wt-chat-right { display: flex; align-items: center; gap: 10px; }
+
+    .wt-tool-btn {
+      width: 28px; height: 28px; border-radius: 7px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .wt-tool-btn svg {
+      width: 13px; height: 13px;
+      stroke: rgba(255,255,255,0.5); fill: none;
+      stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+    }
+    .wt-model-select {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 12px; color: rgba(255,255,255,0.5);
+    }
+    .wt-model-select svg {
+      width: 13px; height: 13px;
+      stroke: #6366f1; fill: none;
+      stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+    }
+    .wt-model-chevron {
+      width: 10px; height: 10px;
+      stroke: rgba(255,255,255,0.3); fill: none;
+      stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+    }
+    .wt-plan-link {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 12px; color: rgba(255,255,255,0.4);
+    }
+    .wt-plan-link svg {
+      width: 13px; height: 13px;
+      stroke: rgba(255,255,255,0.35); fill: none;
+      stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
+    }
+    .wt-send-pill {
+      display: flex; align-items: center; gap: 6px;
+      background: linear-gradient(135deg, #4f46e5, #6366f1);
+      border-radius: 8px;
+      padding: 7px 14px;
+      font-size: 12.5px; font-weight: 500;
+      color: #fff;
+    }
+    .wt-send-pill svg {
+      width: 12px; height: 12px;
+      stroke: #fff; fill: none;
+      stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+    }
+    /* Suggestion chips row */
+    .wt-suggestions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .wt-sug {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 8px;
+      padding: 8px 11px;
+      font-size: 11.5px;
+      color: rgba(255,255,255,0.5);
+      white-space: nowrap;
+    }
+    .wt-sug svg {
+      width: 12px; height: 12px;
+      stroke: rgba(255,255,255,0.35); fill: none;
+      stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
+    }
+
+    /* ─── WALKTHROUGH: CATEGORIZATION SLIDE ─────────────── */
+    .wt-cats-slide {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 24px 28px;
+      gap: 8px;
+    }
+    .wt-cat-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #0c0c0c;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 13px 14px;
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.5s cubic-bezier(0.16,1,0.3,1),
+                  transform 0.5s cubic-bezier(0.16,1,0.3,1);
+    }
+    .wt-cat-row.cat-row-in {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .wt-cat-row.cat-row-exit {
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: opacity 0.3s ease, transform 0.35s ease;
+    }
+
+    /* ── Chat entrance (scroll-triggered) ── */
+    @keyframes chat-box-in {
+      from { opacity: 0; transform: translateY(14px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0)    scale(1); }
+    }
+    .wt-chat-entered .wt-chat-box-wrap {
+      animation: chat-box-in 0.7s cubic-bezier(0.16,1,0.3,1) 0.25s both;
+    }
+    .wt-chat-typed {
+      animation-play-state: paused !important;
+    }
+    .wt-chat-entered .wt-chat-typed {
+      animation-play-state: running !important;
+    }
+    .wt-cat-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 600;
+      flex-shrink: 0;
+    }
+    .wt-cat-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .wt-cat-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.88);
+      letter-spacing: -0.01em;
+    }
+    .wt-cat-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.35);
+    }
+    .wt-cat-badge {
+      font-size: 10.5px;
+      font-weight: 500;
+      padding: 3px 9px;
+      border-radius: 20px;
+      letter-spacing: 0.01em;
+    }
+    .wt-badge-auto {
+      background: rgba(99,102,241,0.15);
+      color: #818cf8;
+      border: 1px solid rgba(99,102,241,0.25);
+    }
+    .wt-badge-learned {
+      background: rgba(52,211,153,0.12);
+      color: #34d399;
+      border: 1px solid rgba(52,211,153,0.22);
+    }
+    .wt-badge-fixed {
+      background: rgba(56,189,248,0.12);
+      color: #38bdf8;
+      border: 1px solid rgba(56,189,248,0.22);
+    }
+
+    /* ─── FEATURES ICONS ─────────────────────────────────── */
+    .section-feat-icons {
+      padding: 156px 0;
+      background: #000;
+    }
+
+    .feat-icons-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .feat-icons-heading {
+      font-size: clamp(28px, 3.2vw, 48px);
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      text-align: center;
+      max-width: 640px;
+      margin: 0 auto 64px;
+      line-height: 1.2;
+    }
+
+    .feat-icons-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .feat-icon-cell {
+      padding: 36px 32px;
+      border: 1px solid var(--border);
+      margin: -1px 0 0 -1px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .feat-icon-cell:nth-child(1) { border-radius: 16px 0 0 0; }
+    .feat-icon-cell:nth-child(3) { border-radius: 0 16px 0 0; }
+    .feat-icon-cell:nth-child(4) { border-radius: 0 0 0 16px; }
+    .feat-icon-cell:nth-child(6) { border-radius: 0 0 16px 0; }
+
+    .feat-icon-box {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .feat-icon-box svg {
+      width: 18px;
+      height: 18px;
+      stroke: rgba(255,255,255,0.6);
+      fill: none;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .feat-icon-name {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .feat-icon-desc {
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    /* ─── CASE STUDIES ───────────────────────────────────── */
+    .section-case-studies {
+      padding: 156px 0;
+      background: #000;
+    }
+
+    .case-heading {
+      font-size: clamp(28px, 3.2vw, 48px);
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      text-align: center;
+      margin-bottom: 80px;
+      line-height: 1.2;
+    }
+
+    .case-item {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      margin-bottom: 100px;
+    }
+
+    .case-item:last-child { margin-bottom: 0; }
+
+    .case-item.reverse .case-img  { order: 2; }
+    .case-item.reverse .case-text { order: 1; }
+
+    .case-img img {
+      width: 100%;
+      border-radius: 20px;
+      aspect-ratio: 564/400;
+      object-fit: cover;
+    }
+
+    .case-text {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      align-items: flex-start;
+    }
+
+    .case-quote {
+      font-size: clamp(20px, 2vw, 28px);
+      font-weight: 500;
+      line-height: 1.45;
+      color: var(--text);
+      margin-bottom: 32px;
+    }
+
+    .case-stats {
+      display: flex;
+      gap: 32px;
+      margin-bottom: 32px;
+    }
+
+    .case-stat-value {
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .case-stat-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+
+    /* ─── NEXT-GEN CARDS ─────────────────────────────────── */
+    .section-cards {
+      padding: 156px 0;
+      background: #000;
+    }
+
+    .cards-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 36px;
+    }
+
+    .cards-heading {
+      font-size: clamp(28px, 3.2vw, 48px);
+      font-weight: 500;
+      letter-spacing: -0.02em;
+    }
+
+    .cards-nav {
+      display: flex;
+      gap: 8px;
+    }
+
+    .cards-nav-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.05);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .cards-nav-btn:hover { background: rgba(255,255,255,0.1); }
+
+    .cards-nav-btn svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--text);
+      fill: none;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .cards-scroll-wrap {
+      overflow: hidden;
+    }
+
+    .cards-track {
+      display: flex;
+      gap: 12px;
+      transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .feat-card {
+      flex: 0 0 calc(20% - 10px);
+      min-width: 240px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      background: #0a0a0a;
+    }
+
+    .feat-card-img {
+      width: 100%;
+      aspect-ratio: 318/400;
+      object-fit: cover;
+    }
+
+    .feat-card-body {
+      padding: 20px;
+    }
+
+    .feat-card-title {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .feat-card-desc {
+      font-size: 14px;
+      color: var(--text-dim);
+      line-height: 1.55;
+    }
+
+    /* ─── TESTIMONIAL ────────────────────────────────────── */
+    .section-testimonial {
+      padding: 0;
+      background: #000;
+    }
+
+    .testimonial-card {
+      max-width: 719px;
+      margin: 0 auto;
+      background: #000;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.06);
+      overflow: hidden;
+    }
+
+    .testimonial-video-area {
+      width: 100%;
+      aspect-ratio: 719/320;
+      background: #000;
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding: 20px 24px;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .testimonial-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .testimonial-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .testimonial-role {
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+
+    .testimonial-dots {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .t-dot {
+      height: 3px;
+      border-radius: 9999px;
+      background: rgba(255,255,255,0.4);
+    }
+
+    .t-dot.active {
+      width: 24px;
+      background: rgba(255,255,255,0.9);
+    }
+
+    .t-dot:not(.active) { width: 16px; }
+
+    /* ─── FAQ ────────────────────────────────────────────── */
+    .section-faq {
+      padding: 156px 0;
+      background: #000;
+    }
+
+    .faq-inner {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .faq-heading {
+      font-size: clamp(32px, 3.5vw, 48px);
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      text-align: center;
+      margin-bottom: 40px;
+      line-height: 1.1;
+    }
+
+    /* All questions in ONE dark rounded card */
+    .faq-card {
+      background: #0d0d0d;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .faq-item:last-child { border-bottom: none; }
+
+    .faq-question {
+      width: 100%;
+      background: none;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text);
+      cursor: pointer;
+      text-align: left;
+      gap: 16px;
+      font-family: var(--font);
+    }
+
+    .faq-icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s;
+    }
+
+    .faq-icon svg {
+      width: 10px;
+      height: 10px;
+      stroke: var(--text);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+    }
+
+    .faq-answer {
+      padding: 0 24px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+      font-size: 14px;
+      color: var(--text-dim);
+      line-height: 1.7;
+    }
+
+    .faq-item.open .faq-answer {
+      max-height: 200px;
+      padding: 0 24px 20px;
+    }
+
+    .faq-item.open .faq-icon {
+      transform: rotate(45deg);
+    }
+
+
+    /* ─── CTA ────────────────────────────────────────────── */
+    .section-cta {
+      position: relative;
+      height: 500px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* Video background */
+    .cta-bg {
+      position: absolute;
+      inset: 0;
+      background: #000;
+    }
+
+    .cta-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    /* Subtle dark overlay so text stays readable */
+    .cta-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.35);
+    }
+
+    .cta-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+    }
+
+    .cta-heading {
+      font-size: clamp(36px, 3vw, 48px);
+      font-weight: 500;
+      letter-spacing: -0.025em;
+      color: var(--text);
+      margin-bottom: 32px;
+      line-height: 1.1;
+    }
+
+    .cta-heading em {
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 500;
+    }
+
+    .cta-btns {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    /* ─── COMPANIES ──────────────────────────────────────── */
+    .section-companies {
+      padding: 32px 0;
+      background: #000;
+      overflow: hidden;
+    }
+
+    .companies-label {
+      text-align: center;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.28);
+      margin-bottom: 20px;
+    }
+
+    .companies-track-wrap {
+      overflow: hidden;
+      mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+      -webkit-mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+    }
+
+    .companies-track {
+      display: flex;
+      align-items: center;
+      gap: 64px;
+      animation: marquee 28s linear infinite;
+      width: max-content;
+    }
+
+    .company-name {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.28);
+      white-space: nowrap;
+    }
+
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ─── INTEGRATIONS ───────────────────────────────────── */
+    .section-integrations {
+      padding: 156px 0;
+      background: #000;
+      position: relative;
+    }
+
+    .integrations-glow { display: none; }
+
+    .integrations-wrap {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .integrations-text h2 {
+      font-size: clamp(28px, 3vw, 40px);
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 20px;
+    }
+
+    .integrations-desc {
+      font-size: 15px;
+      color: var(--text-dim);
+      line-height: 1.7;
+      margin-bottom: 32px;
+      max-width: 460px;
+    }
+
+    /* ── Orbiting Circles ─────────────────────────────── */
+    .orbit-stage {
+      position: relative;
+      width: 380px;
+      height: 380px;
+      flex-shrink: 0;
+      margin: auto;
+    }
+    .orbit-rings {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    .orbit-center {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 62px; height: 62px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.05);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 3;
+      backdrop-filter: blur(6px);
+    }
+    .orbit-center .logo-icon {
+      width: 26px; height: 26px; gap: 4px;
+    }
+    .orb-wrap {
+      position: absolute;
+      width: 0; height: 0;
+      top: 50%; left: 50%;
+      animation: orb-cw var(--dur, 20s) linear infinite;
+      animation-delay: var(--delay, 0s);
+    }
+    .orb-wrap.orb-rev { animation-name: orb-ccw; }
+    .orb-icon {
+      position: absolute;
+      width: 46px; height: 46px;
+      top: calc(-1 * var(--r) - 23px);
+      left: -23px;
+      border-radius: 13px;
+      border: 1px solid rgba(255,255,255,0.11);
+      background: rgba(255,255,255,0.04);
+      display: flex; align-items: center; justify-content: center;
+      backdrop-filter: blur(6px);
+      animation: orb-ccw var(--dur, 20s) linear infinite;
+      animation-delay: var(--delay, 0s);
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+    .orb-wrap.orb-rev .orb-icon { animation-name: orb-cw; }
+    .orb-icon:hover {
+      background: rgba(255,255,255,0.09);
+      border-color: rgba(255,255,255,0.22);
+    }
+    .orb-icon svg {
+      width: 22px; height: 22px;
+      stroke: rgba(255,255,255,0.65);
+      fill: none;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    @keyframes orb-cw  { to { transform: rotate( 360deg); } }
+    @keyframes orb-ccw { to { transform: rotate(-360deg); } }
+
+    /* ─── FOOTER ─────────────────────────────────────────── */
+    .footer {
+      background: #000;
+      padding: 64px 0 40px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 60px;
+    }
+
+    .footer-brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--logo-font);
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .footer-tagline {
+      font-size: 14px;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    .footer-col-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 20px;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .footer-links a {
+      font-size: 14px;
+      color: var(--text-dim);
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--text); }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      padding-top: 28px;
+    }
+
+    .footer-bottom span,
+    .footer-bottom a {
+      font-size: 13px;
+      color: rgba(255,255,255,0.28);
+    }
+
+    .footer-bottom a:hover { color: var(--text-dim); }
+
+    .footer-sep {
+      width: 1px;
+      height: 12px;
+      background: rgba(255,255,255,0.15);
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════ NAVBAR -->
+<nav class="navbar">
+  <div class="container">
+    <a class="nav-logo" href="#">
+      <div class="logo-icon">
+        <span></span><span></span>
+        <span></span><span></span>
+      </div>
+      Fin
+    </a>
+
+    <div class="nav-links-pill">
+      <a href="#">Recursos</a>
+      <a href="#">Preços</a>
+      <a href="#">Blog</a>
+      <a href="#">Contato</a>
+    </div>
+
+    <a class="btn-pill-white" href="#">Comece sua jornada</a>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════ HERO -->
+<section class="hero">
+  <div class="hero-canvas">
+    <video class="hero-video" autoplay muted loop playsinline>
+      <source src="images/hero-bg.mp4" type="video/mp4" />
+    </video>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-badge-wrap">
+      <div class="hero-badge">
+        <div class="hero-badge-icon">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 5h6M6 3l2 2-2 2"/>
+          </svg>
+        </div>
+        🎉 Meta atingida! Comprar carro dos sonhos
+      </div>
+    </div>
+
+    <h1 class="hero-headline">
+      Você registra seus gastos,<br>
+      o Fin <em>organiza</em> suas economias.
+    </h1>
+
+    <p class="hero-sub">
+      O Fin é o assistente financeiro amigável que ajuda você a acompanhar, economizar e aumentar seu patrimônio com conselhos personalizados de IA.
+    </p>
+
+    <div class="hero-ctas">
+      <a class="btn-pill-white" href="#">Comece seu teste grátis</a>
+      <a class="btn-pill-dark" href="#">Saiba mais</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ ABOUT -->
+<section class="section-about">
+  <div class="about-inner">
+    <p class="about-label">A filosofia do Fin</p>
+    <p class="about-text" id="about-text">
+      <span class="word">Você</span> <span class="word">não</span> <span class="word">precisa</span> <span class="word">ganhar</span> <span class="word">mais</span> <span class="word">dinheiro.</span> <span class="word">Precisa</span> <span class="word">parar</span> <span class="word">de</span> <span class="word">perder</span> <span class="word">o</span> <span class="word">que</span> <span class="word">já</span> <span class="word">tem.</span>
+      <span class="word dim">Registrar</span> <span class="word dim">seus</span> <span class="word dim">gastos</span> <span class="word dim">é</span> <span class="word dim">o</span> <span class="word dim">primeiro</span> <span class="word dim">passo</span> <span class="word dim">para</span> <span class="word dim">uma</span> <span class="word dim">vida</span> <span class="word dim">financeira</span> <span class="word dim">saudável.</span> <span class="word dim">Com</span> <span class="word dim">tecnologia</span> <span class="word dim">que</span> <span class="word dim">aprende</span> <span class="word dim">com</span> <span class="word dim">você,</span> <span class="word dim">o</span> <span class="word dim">Fin</span> <span class="word dim">torna</span> <span class="word dim">o</span> <span class="word dim">controle</span> <span class="word dim">financeiro</span> <span class="word dim">mais</span> <span class="word dim">simples,</span> <span class="word dim">inteligente</span> <span class="word dim">e</span> <span class="word dim">acessível</span> <span class="word dim">para</span> <span class="word dim">todos.</span>
+    </p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ FEATURES ILLUSTRATIONS -->
+<section class="section-feat-illus">
+  <div class="container">
+    <h2 class="feat-illus-heading">Clareza financeira feita para você</h2>
+
+    <div class="feat-illus-row">
+
+      <!-- Card 1: Resumo do mês -->
+      <div class="feat-illus-item">
+        <div class="feat-illus-icon">
+          <div class="fi-card">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start">
+              <div>
+                <div class="fi-label">Orçamento</div>
+                <div class="fi-amount" id="budget-income">R$ 0k</div>
+              </div>
+              <div style="text-align:right">
+                <div class="fi-label">Despesas</div>
+                <div class="fi-amount" id="budget-expense" style="color:rgba(255,255,255,0.7)">- R$ 0k</div>
+              </div>
+            </div>
+            <div class="fi-progress-track">
+              <div class="fi-progress-fill" id="budget-bar" style="width:0%"></div>
+            </div>
+            <div class="fi-util" id="budget-pct">0% utilizado</div>
+          </div>
+        </div>
+        <div class="feat-illus-title">Resumo do mês</div>
+        <div class="feat-illus-desc">Veja quanto entrou, quanto saiu e quanto do seu orçamento já foi usado, tudo sem abrir uma planilha.</div>
+      </div>
+
+      <!-- Card 2: Insights Inteligentes -->
+      <div class="feat-illus-item">
+        <div class="feat-illus-icon">
+          <div class="fi-insights">
+            <div class="fi-insight">
+              <div class="fi-notif-icon fi-notif-purple">
+                <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              </div>
+              <div class="fi-notif-body">
+                <div class="fi-notif-header">
+                  <span class="fi-notif-title">Gasto em lazer aumentou</span>
+                  <span class="fi-notif-dot">·</span>
+                  <span class="fi-notif-time">2m atrás</span>
+                </div>
+                <div class="fi-notif-desc">Seus gastos cresceram 23% em relação ao mês passado.</div>
+              </div>
+            </div>
+            <div class="fi-insight">
+              <div class="fi-notif-icon fi-notif-blue">
+                <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              </div>
+              <div class="fi-notif-body">
+                <div class="fi-notif-header">
+                  <span class="fi-notif-title">Limite de Alimentação</span>
+                  <span class="fi-notif-dot">·</span>
+                  <span class="fi-notif-time">agora</span>
+                </div>
+                <div class="fi-notif-desc">87% do orçamento utilizado. Ajustar agora evita surpresas.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="feat-illus-title">Insights inteligentes</div>
+        <div class="feat-illus-desc">A IA monitora seus hábitos e te avisa quando algo foge do padrão: gasto fora da curva, aumento em categoria ou risco ao plano.</div>
+      </div>
+
+      <!-- Card 3: Categorias Automáticas -->
+      <div class="feat-illus-item">
+        <div class="feat-illus-icon">
+          <div class="fi-cats-wrap">
+            <div class="fi-cats-card" id="cat-card-1">
+              <div class="fi-cat-row">
+                <div class="fi-cat-badge fi-green">
+                  <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                </div>
+                <div class="fi-cat-body">
+                  <div class="fi-cat-name">Mercado</div>
+                  <div class="fi-progress-track" style="margin:0">
+                    <div class="fi-progress-fill fi-bar-indigo" id="cat-bar-1" style="width:0%"></div>
+                  </div>
+                  <div class="fi-cat-amounts">
+                    <span id="cat-val-1a">R$ 0</span>
+                    <span id="cat-val-1b">R$ 0</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="fi-cats-card" id="cat-card-2">
+              <div class="fi-cat-row">
+                <div class="fi-cat-badge fi-amber">
+                  <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                </div>
+                <div class="fi-cat-body">
+                  <div class="fi-cat-name">Crédito</div>
+                  <div class="fi-progress-track" style="margin:0">
+                    <div class="fi-progress-fill fi-bar-indigo" id="cat-bar-2" style="width:0%"></div>
+                  </div>
+                  <div class="fi-cat-amounts">
+                    <span id="cat-val-2a">R$ 0</span>
+                    <span id="cat-val-2b">R$ 0</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="feat-illus-title">Categorias automáticas</div>
+        <div class="feat-illus-desc">Cada gasto é organizado automaticamente em categorias como mercado, transporte e lazer. Veja para onde vai cada real.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ WALKTHROUGH 1 -->
+<section class="section-walkthrough" id="walkthrough-1">
+  <div class="container">
+
+    <!-- Pair 1: Chat IA -->
+    <div class="wt-pair" id="wt-pair-chat">
+      <div class="wt-text">
+        <h3 class="wt-item-title">Converse com a IA sobre o seu dinheiro</h3>
+        <p class="wt-item-desc">Pergunte coisas como "Quanto gastei com Uber esse mês?" ou "Quais meus maiores gastos da semana?". A IA entende sua pergunta e te responde na hora.</p>
+      </div>
+      <div class="wt-illus">
+        <div class="wt-illus-frame">
+          <div class="wt-chat">
+            <div class="wt-chat-box-wrap">
+              <div class="wt-chat-box">
+                <div class="wt-chat-area">
+                  <div class="wt-chat-typed">Quanto gastei no mercado esse mês?</div>
+                </div>
+                <div class="wt-chat-toolbar">
+                  <div class="wt-chat-left">
+                    <div class="wt-tool-btn">
+                      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    </div>
+                    <div class="wt-model-select">
+                      <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                      Fin IA
+                      <svg class="wt-model-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                  </div>
+                  <div class="wt-chat-right">
+                    <div class="wt-plan-link">
+                      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                      Plano
+                    </div>
+                    <div class="wt-send-pill">
+                      Enviar
+                      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pair 2: Categorização (illustration on left) -->
+    <div class="wt-pair wt-pair--flip" id="wt-pair-cats">
+      <div class="wt-illus">
+        <div class="wt-illus-frame">
+          <div class="wt-cats-slide" id="wt-cats-slide">
+            <div class="wt-cat-row" id="cat-row-0">
+              <div class="wt-cat-avatar" style="background:rgba(167,139,250,0.18);color:#a78bfa;">C</div>
+              <div class="wt-cat-info">
+                <div class="wt-cat-name">Carrefour</div>
+                <div class="wt-cat-label">Mercado · R$ 145,90</div>
+              </div>
+              <div class="wt-cat-badge wt-badge-auto">Auto</div>
+            </div>
+            <div class="wt-cat-row" id="cat-row-1">
+              <div class="wt-cat-avatar" style="background:rgba(52,211,153,0.15);color:#34d399;">U</div>
+              <div class="wt-cat-info">
+                <div class="wt-cat-name">Uber</div>
+                <div class="wt-cat-label">Transporte · R$ 32,00</div>
+              </div>
+              <div class="wt-cat-badge wt-badge-learned">Aprendido</div>
+            </div>
+            <div class="wt-cat-row" id="cat-row-2">
+              <div class="wt-cat-avatar" style="background:rgba(56,189,248,0.13);color:#38bdf8;">S</div>
+              <div class="wt-cat-info">
+                <div class="wt-cat-name">Spotify</div>
+                <div class="wt-cat-label">Assinatura · R$ 21,90</div>
+              </div>
+              <div class="wt-cat-badge wt-badge-fixed">Fixo</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="wt-text">
+        <h3 class="wt-item-title">Categorização automática que evolui com você</h3>
+        <p class="wt-item-desc">Cada vez que você registra um gasto, a IA entende o estabelecimento e guarda o contexto. Depois de um tempo, basta digitar "Carrefour 45,90" que o app já sabe que é mercado.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ FEATURES ICONS -->
+<section class="section-feat-icons">
+  <div class="container">
+    <div class="feat-icons-inner">
+      <h2 class="feat-icons-heading">Tudo o que você precisa para controlar seu dinheiro</h2>
+
+      <div class="feat-icons-grid">
+
+        <div class="feat-icon-cell">
+          <div class="feat-icon-box">
+            <svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 1 3 3v4a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4M8 22h8"/></svg>
+          </div>
+          <div class="feat-icon-name">Registro por voz</div>
+          <div class="feat-icon-desc">Registre gastos falando com o assistente. Rápido, natural e sem precisar abrir planilhas ou digitar valores.</div>
+        </div>
+
+        <div class="feat-icon-cell">
+          <div class="feat-icon-box">
+            <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          </div>
+          <div class="feat-icon-name">Importação de extrato</div>
+          <div class="feat-icon-desc">Importe extratos bancários e o Fin categoriza tudo automaticamente, poupando horas de trabalho manual.</div>
+        </div>
+
+        <div class="feat-icon-cell">
+          <div class="feat-icon-box">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5" fill="rgba(255,255,255,0.6)"/><path d="M21 15l-5-5L5 21"/></svg>
+          </div>
+          <div class="feat-icon-name">Nota fiscal</div>
+          <div class="feat-icon-desc">Envie uma foto da nota fiscal e a IA extrai valor, estabelecimento e categoria automaticamente para você.</div>
+        </div>
+
+        <div class="feat-icon-cell">
+          <div class="feat-icon-box">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <div class="feat-icon-name">Metas de economia</div>
+          <div class="feat-icon-desc">Defina uma meta mensal de economia e acompanhe seu progresso em tempo real. O Fin te avisa quando está perto do limite.</div>
+        </div>
+
+        <div class="feat-icon-cell">
+          <div class="feat-icon-box">
+            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div class="feat-icon-name">Criptografia total</div>
+          <div class="feat-icon-desc">Seus valores são criptografados em trânsito e em repouso. Nem a equipe do Fin consegue ver seus números reais.</div>
+        </div>
+
+        <div class="feat-icon-cell">
+          <div class="feat-icon-box">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+          </div>
+          <div class="feat-icon-name">IA que aprende</div>
+          <div class="feat-icon-desc">Quanto mais você usa, mais precisa a IA fica. Ela aprende seus estabelecimentos favoritos e categoriza sozinha com o tempo.</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ CASE STUDIES -->
+<section class="section-case-studies">
+  <div class="container">
+    <h2 class="case-heading">Veja o que nossos usuários<br>estão conseguindo com o Fin</h2>
+
+    <!-- Case 1: text LEFT, image RIGHT -->
+    <div class="case-item">
+      <div class="case-text">
+        <p class="case-quote">"Finalmente entendi para onde ia o meu dinheiro todo mês. O Fin me mostrou que eu gastava R$800 por mês em delivery sem perceber."</p>
+        <div class="case-stats">
+          <div>
+            <div class="case-stat-value">R$1.250</div>
+            <div class="case-stat-label">Economizados/mês</div>
+          </div>
+          <div>
+            <div class="case-stat-value">3 meses</div>
+            <div class="case-stat-label">Para a meta</div>
+          </div>
+        </div>
+      </div>
+      <div class="case-img">
+        <img src="images/case-study-1.png" alt="Usuário Fin - economia mensal" />
+      </div>
+    </div>
+
+    <!-- Case 2: image LEFT, text RIGHT -->
+    <div class="case-item reverse">
+      <div class="case-text">
+        <p class="case-quote">"Eu tentei vários apps de finanças, mas o Fin foi o único que realmente aprende como eu gasto. Não preciso categorizar mais nada manualmente."</p>
+        <div class="case-stats">
+          <div>
+            <div class="case-stat-value">-40%</div>
+            <div class="case-stat-label">Gastos supérfluos</div>
+          </div>
+          <div>
+            <div class="case-stat-value">+2h</div>
+            <div class="case-stat-label">Livres por semana</div>
+          </div>
+        </div>
+      </div>
+      <div class="case-img">
+        <img src="images/case-study-2.png" alt="Usuário Fin - categorização automática" />
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ NEXT-GEN CARDS -->
+
+<!-- ══════════════════════════════════════════════ FAQ -->
+<section class="section-faq">
+  <div class="container">
+    <div class="faq-inner">
+      <h2 class="faq-heading">Perguntas frequentes</h2>
+
+      <div class="faq-card">
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            O que é o Fin?
+            <span class="faq-icon">
+              <svg viewBox="0 0 10 10"><line x1="5" y1="1" x2="5" y2="9"/><line x1="1" y1="5" x2="9" y2="5"/></svg>
+            </span>
+          </button>
+          <div class="faq-answer">O Fin é um assistente financeiro com IA que registra e organiza seus gastos, aprende seus estabelecimentos favoritos, separa tudo por categorias e te avisa quando algo sai do normal.</div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            Vocês têm acesso aos valores das minhas transações?
+            <span class="faq-icon">
+              <svg viewBox="0 0 10 10"><line x1="5" y1="1" x2="5" y2="9"/><line x1="1" y1="5" x2="9" y2="5"/></svg>
+            </span>
+          </button>
+          <div class="faq-answer">Não. Os valores das suas transações são criptografados antes de serem salvos. Mesmo que alguém acesse o banco de dados, os valores ficam ilegíveis — só você consegue ver os números reais quando faz login no app.</div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            Eu preciso conectar minha conta bancária?
+            <span class="faq-icon">
+              <svg viewBox="0 0 10 10"><line x1="5" y1="1" x2="5" y2="9"/><line x1="1" y1="5" x2="9" y2="5"/></svg>
+            </span>
+          </button>
+          <div class="faq-answer">Não. O Fin não se conecta à sua conta bancária. Você registra seus gastos manualmente ou importando extratos, garantindo total controle e segurança sobre suas informações.</div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            Eu tenho que registrar tudo manualmente?
+            <span class="faq-icon">
+              <svg viewBox="0 0 10 10"><line x1="5" y1="1" x2="5" y2="9"/><line x1="1" y1="5" x2="9" y2="5"/></svg>
+            </span>
+          </button>
+          <div class="faq-answer">Não. Você pode falar com o assistente, digitar, enviar nota fiscal, importar extratos ou deixar a IA sugerir categorias automaticamente. Quanto mais você usa, menos trabalho manual é necessário.</div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            O app é gratuito?
+            <span class="faq-icon">
+              <svg viewBox="0 0 10 10"><line x1="5" y1="1" x2="5" y2="9"/><line x1="1" y1="5" x2="9" y2="5"/></svg>
+            </span>
+          </button>
+          <div class="faq-answer">Sim, o app é gratuito no lançamento. Futuramente teremos planos opcionais com recursos avançados, mas o básico continuará sempre grátis.</div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            Como a IA sabe em qual categoria colocar meus gastos?
+            <span class="faq-icon">
+              <svg viewBox="0 0 10 10"><line x1="5" y1="1" x2="5" y2="9"/><line x1="1" y1="5" x2="9" y2="5"/></svg>
+            </span>
+          </button>
+          <div class="faq-answer">A IA identifica o estabelecimento, cruza com seu histórico e aplica regras adaptativas. Quanto mais você usa o Fin, mais precisa ela fica — chegando ao ponto de categorizar sozinha só pelo nome do lugar.</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ CTA -->
+<section class="section-cta">
+  <div class="cta-bg">
+    <video class="cta-video" autoplay muted loop playsinline>
+      <source src="images/cta-bg.mp4" type="video/mp4" />
+    </video>
+  </div>
+  <div class="cta-content">
+    <h2 class="cta-heading">Pronto para organizar suas <em>finanças?</em></h2>
+    <div class="cta-btns">
+      <a class="btn-pill-white" href="#">Comece seu teste grátis</a>
+      <a class="btn-pill-dark" href="#">Saiba mais</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ COMPANIES -->
+<section class="section-companies">
+  <p class="companies-label">Usado por pessoas de todo o Brasil</p>
+  <div class="companies-track-wrap">
+    <div class="companies-track">
+      <span class="company-name">Universitário</span>
+      <span class="company-name">Família</span>
+      <span class="company-name">Freelancer</span>
+      <span class="company-name">Casal</span>
+      <span class="company-name">Empreendedor</span>
+      <span class="company-name">CLT</span>
+      <span class="company-name">MEI</span>
+      <span class="company-name">Autônomo</span>
+      <span class="company-name">PJ</span>
+      <span class="company-name">Universitário</span>
+      <span class="company-name">Família</span>
+      <span class="company-name">Freelancer</span>
+      <span class="company-name">Casal</span>
+      <span class="company-name">Empreendedor</span>
+      <span class="company-name">CLT</span>
+      <span class="company-name">MEI</span>
+      <span class="company-name">Autônomo</span>
+      <span class="company-name">PJ</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ INTEGRATIONS -->
+<section class="section-integrations">
+  <div class="integrations-glow"></div>
+  <div class="integrations-wrap container">
+
+    <div class="integrations-text">
+      <h2>Integrado com as ferramentas<br>que você já usa</h2>
+      <p class="integrations-desc">Conecte o Fin com os apps do seu dia a dia — bancos, carteiras digitais, planilhas e muito mais — em poucos cliques, sem complicação.</p>
+    </div>
+
+    <div class="orbit-stage">
+
+      <!-- Dashed orbit ring guides -->
+      <svg class="orbit-rings" viewBox="0 0 380 380" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="190" cy="190" r="100" stroke="rgba(255,255,255,0.18)" stroke-width="1" stroke-dasharray="3 6" fill="none"/>
+        <circle cx="190" cy="190" r="167" stroke="rgba(255,255,255,0.13)" stroke-width="1" stroke-dasharray="3 8" fill="none"/>
+      </svg>
+
+      <!-- Center: Fin logo -->
+      <div class="orbit-center">
+        <div class="logo-icon">
+          <span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+
+      <!-- ── Inner orbit: CW, 20s, r=100px ── -->
+
+      <!-- Nubank — N monogram -->
+      <div class="orb-wrap" style="--dur:20s;--r:100px;--delay:0s">
+        <div class="orb-icon" title="Nubank">
+          <svg viewBox="0 0 24 24"><path d="M7 17V7l10 10V7"/></svg>
+        </div>
+      </div>
+
+      <!-- Itaú — arch + cross -->
+      <div class="orb-wrap" style="--dur:20s;--r:100px;--delay:-6.667s">
+        <div class="orb-icon" title="Itaú">
+          <svg viewBox="0 0 24 24">
+            <path d="M5 17.5c0-3.9 3.1-7 7-7s7 3.1 7 7"/>
+            <line x1="12" y1="10.5" x2="12" y2="6.5"/>
+            <line x1="9.8" y1="8.5" x2="14.2" y2="8.5"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Santander — 3 curved stripes (flame) -->
+      <div class="orb-wrap" style="--dur:20s;--r:100px;--delay:-13.333s">
+        <div class="orb-icon" title="Santander">
+          <svg viewBox="0 0 24 24">
+            <path d="M6 8c3.3-2.2 8.7-2.2 12 0"/>
+            <path d="M6 12c3.3-2.2 8.7-2.2 12 0"/>
+            <path d="M6 16c3.3-2.2 8.7-2.2 12 0"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- ── Outer orbit: CCW, 32s, r=167px ── -->
+
+      <!-- PIX — diamond key -->
+      <div class="orb-wrap orb-rev" style="--dur:32s;--r:167px;--delay:0s">
+        <div class="orb-icon" title="PIX">
+          <svg viewBox="0 0 24 24">
+            <path d="M8.5 3.5L3.5 8.5l5 5 5-5z"/>
+            <path d="M15.5 10.5l-5 5 5 5 5-5z"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Inter — I com serifas -->
+      <div class="orb-wrap orb-rev" style="--dur:32s;--r:167px;--delay:-6.4s">
+        <div class="orb-icon" title="Inter">
+          <svg viewBox="0 0 24 24">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="8.5" y1="5" x2="15.5" y2="5"/>
+            <line x1="8.5" y1="19" x2="15.5" y2="19"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Bradesco — B duplo -->
+      <div class="orb-wrap orb-rev" style="--dur:32s;--r:167px;--delay:-12.8s">
+        <div class="orb-icon" title="Bradesco">
+          <svg viewBox="0 0 24 24">
+            <line x1="8" y1="5" x2="8" y2="19"/>
+            <path d="M8 5h5a3 3 0 0 1 0 6H8"/>
+            <path d="M8 11h5.5a3.5 3.5 0 0 1 0 8H8"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Caixa — C aberto -->
+      <div class="orb-wrap orb-rev" style="--dur:32s;--r:167px;--delay:-19.2s">
+        <div class="orb-icon" title="Caixa">
+          <svg viewBox="0 0 24 24">
+            <path d="M19 9A7 7 0 1 0 19 15"/>
+            <line x1="15.5" y1="12" x2="21" y2="12"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- C6 Bank — hexágono -->
+      <div class="orb-wrap orb-rev" style="--dur:32s;--r:167px;--delay:-25.6s">
+        <div class="orb-icon" title="C6 Bank">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 3l8.66 5v8L12 21l-8.66-5V8z"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════ FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+
+      <div>
+        <div class="footer-brand-logo">
+          <div class="logo-icon">
+            <span></span><span></span>
+            <span></span><span></span>
+          </div>
+          Fin
+        </div>
+        <p class="footer-tagline">Assistente financeiro com IA para controle de gastos e economias pessoais.</p>
+      </div>
+
+      <div>
+        <div class="footer-col-title">Recursos</div>
+        <ul class="footer-links">
+          <li><a href="#">Categorias Automáticas</a></li>
+          <li><a href="#">Insights Inteligentes</a></li>
+          <li><a href="#">Chat Financeiro</a></li>
+          <li><a href="#">Preços</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="footer-col-title">Para você</div>
+        <ul class="footer-links">
+          <li><a href="#">Universitário</a></li>
+          <li><a href="#">Família</a></li>
+          <li><a href="#">Casal</a></li>
+          <li><a href="#">Empresa</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="footer-col-title">Contato</div>
+        <ul class="footer-links">
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">YouTube</a></li>
+          <li><a href="#">LinkedIn</a></li>
+          <li><a href="#">Twitter / X</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <span>© 2026 Fin APP. Todos os direitos reservados.</span>
+      <div class="footer-sep"></div>
+      <a href="#">Feito com ❤️ no Brasil</a>
+      <div class="footer-sep"></div>
+      <a href="#">Contato</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ── FAQ accordion ──────────────────────────────────────
+  function toggleFAQ(btn) {
+    const item = btn.closest('.faq-item');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
+
+  // ── Walkthrough pair scroll triggers ─────────────────
+  function triggerCatRows() {
+    const rows = document.querySelectorAll('#wt-cats-slide .wt-cat-row');
+    rows.forEach((row, i) => {
+      setTimeout(() => row.classList.add('cat-row-in'), i * 180);
+    });
+  }
+
+  const chatPairObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('wt-chat-entered');
+        chatPairObs.disconnect();
+      }
+    });
+  }, { threshold: 0.35 });
+  const chatPair = document.getElementById('wt-pair-chat');
+  if (chatPair) chatPairObs.observe(chatPair);
+
+  const catsPairObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        triggerCatRows();
+        catsPairObs.disconnect();
+      }
+    });
+  }, { threshold: 0.35 });
+  const catsPair = document.getElementById('wt-pair-cats');
+  if (catsPair) catsPairObs.observe(catsPair);
+
+
+  // ── About word reveal on scroll ───────────────────────
+  const aboutSection = document.getElementById('about-text');
+  const dimWords = aboutSection.querySelectorAll('.word.dim');
+
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        dimWords.forEach((w, i) => {
+          setTimeout(() => w.classList.remove('dim'), i * 40);
+        });
+        revealObserver.disconnect();
+      }
+    });
+  }, { threshold: 0.3 });
+
+  revealObserver.observe(aboutSection);
+
+  // ═══════════════════════════════════════════════════
+  //  ANIMATION SYSTEM
+  //  - Sections slide up on enter
+  //  - Labels: fast subtle rise
+  //  - Headings: rise + blur→sharp (tech feel)
+  //  - Text/CTA: clean rise
+  //  - Cards: rise + scale (materialization)
+  //  - Groups stagger 80ms per item
+  // ═══════════════════════════════════════════════════
+
+  const EASE = 'cubic-bezier(0.16, 1, 0.3, 1)';
+  const SKIP = el => el.closest('.hero') || el.closest('#wt-frame') ||
+                     el.closest('.fi-insights') || el.closest('.fi-cats-wrap') ||
+                     el.id === 'about-text';
+
+  // Element type definitions
+  // sel, translateY, duration(ms), blur, scale, stagger(ms between siblings)
+  const TYPES = [
+    { sel: '.about-label, .companies-label, .wt-item-accent',
+      y: 8,  dur: 500, blur: false, scale: false, stagger: 0   },
+    { sel: '.feat-illus-heading, .feat-icons-heading, .case-heading, .faq-heading, .cta-heading, .integrations-text h2',
+      y: 14, dur: 700, blur: true,  scale: false, stagger: 0   },
+    { sel: '.integrations-desc, .cta-btns, .companies-logos',
+      y: 20, dur: 650, blur: false, scale: false, stagger: 0   },
+    { sel: '.feat-illus-item, .feat-icon-cell',
+      y: 22, dur: 750, blur: false, scale: true,  stagger: 80  },
+    { sel: '.faq-item',
+      y: 18, dur: 680, blur: false, scale: false, stagger: 60  },
+    { sel: '.case-item',
+      y: 22, dur: 720, blur: false, scale: false, stagger: 100 },
+    { sel: '.wt-item',
+      y: 20, dur: 680, blur: false, scale: false, stagger: 140 },
+    { sel: '.orbit-stage',
+      y: 30, dur: 800, blur: false, scale: false, stagger: 0   },
+  ];
+
+  // Build element registry
+  const registry = new Map(); // el → { type, group }
+  const groups   = new Map(); // groupKey → [els]
+
+  TYPES.forEach((type, ti) => {
+    const found = [];
+    type.sel.split(',').map(s => s.trim()).forEach(s => {
+      document.querySelectorAll(s).forEach(el => {
+        if (SKIP(el) || registry.has(el)) return;
+        found.push(el);
+      });
+    });
+
+    // Split into per-parent groups so siblings stagger together
+    const byParent = new Map();
+    found.forEach(el => {
+      const key = el.parentElement || el;
+      if (!byParent.has(key)) byParent.set(key, []);
+      byParent.get(key).push(el);
+    });
+
+    byParent.forEach((els, key) => {
+      const groupKey = Symbol();
+      groups.set(groupKey, els);
+      els.forEach(el => registry.set(el, { type, groupKey }));
+    });
+  });
+
+  // Apply initial hidden state via inline styles
+  registry.forEach((_, el) => {
+    const { type } = registry.get(el);
+    const transform = type.scale
+      ? `translateY(${type.y}px) scale(0.97)`
+      : `translateY(${type.y}px)`;
+    const filter = type.blur ? `blur(5px)` : '';
+    el.style.opacity   = '0';
+    el.style.transform = transform;
+    if (filter) el.style.filter = filter;
+
+    const filterTrans = type.blur ? `, filter ${type.dur * 0.9}ms ${EASE}` : '';
+    el.style.transition = `opacity ${type.dur}ms ${EASE}, transform ${type.dur}ms ${EASE}${filterTrans}`;
+  });
+
+  function revealEl(el, delay = 0) {
+    setTimeout(() => {
+      el.style.opacity   = '1';
+      el.style.transform = 'translateY(0) scale(1)';
+      el.style.filter    = 'blur(0px)';
+    }, delay);
+  }
+
+  // Section entrance observer
+  const secObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('sec-in');
+      secObserver.unobserve(entry.target);
+    });
+  }, { threshold: 0.04, rootMargin: '0px 0px -20px 0px' });
+  document.querySelectorAll('section:not(.hero)').forEach(s => secObserver.observe(s));
+
+  // Element reveal observer — fires per group with stagger
+  requestAnimationFrame(() => {
+    const fired = new Set();
+
+    const elObs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        elObs.unobserve(entry.target);
+
+        const info = registry.get(entry.target);
+        if (!info || fired.has(info.groupKey)) return;
+        fired.add(info.groupKey);
+
+        const els = groups.get(info.groupKey) || [entry.target];
+        els.forEach((el, i) => {
+          elObs.unobserve(el);
+          revealEl(el, i * info.type.stagger);
+        });
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+    registry.forEach((_, el) => elObs.observe(el));
+  });
+
+  // feat-illus section: trigger micro-animations when visible
+
+  // ── Budget animation ──────────────────────────────────
+  let budgetTriggered = false;
+
+  function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
+  function animCount(el, to, prefix, suffix, duration) {
+    const start = performance.now();
+    (function tick(now) {
+      const p = easeOutCubic(Math.min((now - start) / duration, 1));
+      el.textContent = prefix + Math.round(to * p) + suffix;
+      if (p < 1) requestAnimationFrame(tick);
+    })(performance.now());
+  }
+
+  function triggerBudget() {
+    if (budgetTriggered) return;
+    budgetTriggered = true;
+    const bar = document.getElementById('budget-bar');
+    const income = document.getElementById('budget-income');
+    const expense = document.getElementById('budget-expense');
+    const pct = document.getElementById('budget-pct');
+    if (!bar) return;
+    setTimeout(() => {
+      bar.style.width = '52%';
+      animCount(income, 20, 'R$ ', 'k', 1300);
+      animCount(expense, 10, '- R$ ', 'k', 1300);
+      animCount(pct, 52, '', '% utilizado', 1300);
+    }, 300);
+  }
+
+  // ── Category animation ────────────────────────────────
+  let catsTriggered = false;
+
+  function fmtBRL(n) {
+    return 'R$ ' + n.toLocaleString('pt-BR');
+  }
+
+  function animCountBRL(el, to, duration) {
+    const start = performance.now();
+    (function tick(now) {
+      const p = easeOutCubic(Math.min((now - start) / duration, 1));
+      el.textContent = fmtBRL(Math.round(to * p));
+      if (p < 1) requestAnimationFrame(tick);
+    })(performance.now());
+  }
+
+  function triggerCats() {
+    if (catsTriggered) return;
+    catsTriggered = true;
+    const c1 = document.getElementById('cat-card-1');
+    const c2 = document.getElementById('cat-card-2');
+    // Card 1 — Mercado
+    setTimeout(() => {
+      if (c1) c1.classList.add('cat-in');
+      const b1 = document.getElementById('cat-bar-1');
+      if (b1) b1.style.width = '68%';
+      animCountBRL(document.getElementById('cat-val-1a'), 700, 1200);
+      animCountBRL(document.getElementById('cat-val-1b'), 150, 1200);
+    }, 200);
+    // Card 2 — Crédito
+    setTimeout(() => {
+      if (c2) c2.classList.add('cat-in');
+      const b2 = document.getElementById('cat-bar-2');
+      if (b2) b2.style.width = '84%';
+      animCountBRL(document.getElementById('cat-val-2a'), 2500, 1200);
+      animCountBRL(document.getElementById('cat-val-2b'), 350, 1200);
+    }, 560);
+  }
+
+  const notifications = document.querySelectorAll('.fi-insight');
+  let notifsTriggered = false;
+
+  function triggerNotifs() {
+    if (notifsTriggered) return;
+    notifsTriggered = true;
+    notifications.forEach((el, i) => {
+      setTimeout(() => el.classList.add('notif-in'), i * 380 + 200);
+    });
+  }
+
+  // Trigger feat-illus micro-animations when that section enters view
+  // Trigger micro-animations per card when each card enters view
+  const featCards = document.querySelectorAll('.feat-illus-item');
+  const microObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const card = entry.target;
+      microObs.unobserve(card);
+
+      if (card.querySelector('#budget-income'))   triggerBudget();
+      if (card.querySelector('.fi-insight'))       setTimeout(triggerNotifs, 200);
+      if (card.querySelector('.fi-cats-wrap'))     triggerCats();
+    });
+  }, { threshold: 0.5 });   // 50% do card visível antes de disparar
+
+  featCards.forEach(c => microObs.observe(c));
+</script>
+
+</body>
+</html>

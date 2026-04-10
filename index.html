@@ -105,17 +105,26 @@
     /* ─── NAVBAR ─────────────────────────────────────────── */
     .navbar {
       position: fixed;
-      top: 0; left: 0; right: 0;
+      top: 20px; left: 0; right: 0;
       z-index: 100;
-      height: 72px;
       display: flex;
-      align-items: center;
+      justify-content: center;
+      pointer-events: none;
     }
 
-    .navbar .container {
-      display: flex;
+    .nav-pill {
+      pointer-events: all;
+      display: inline-flex;
       align-items: center;
       justify-content: space-between;
+      gap: 24px;
+      padding: 8px 8px 8px 16px;
+      border-radius: 9999px;
+      background: rgba(18, 18, 20, 0.55);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 4px 32px rgba(0,0,0,0.35), 0 1px 0 rgba(255,255,255,0.04) inset;
     }
 
     .nav-logo {
@@ -132,8 +141,8 @@
     }
 
     .nav-logo-img {
-      width: 36px;
-      height: 36px;
+      width: 34px;
+      height: 34px;
       object-fit: contain;
       flex-shrink: 0;
     }
@@ -142,28 +151,6 @@
       width: 40px;
       height: 40px;
       object-fit: contain;
-    }
-
-    .nav-links-pill {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      padding: 4px 4px;
-      border-radius: 64px;
-    }
-
-    .nav-links-pill a {
-      padding: 6px 16px;
-      border-radius: 64px;
-      font-size: 14px;
-      font-weight: 500;
-      color: rgba(255,255,255,0.7);
-      transition: color 0.2s, background 0.2s;
-    }
-
-    .nav-links-pill a:hover {
-      color: var(--text);
-      background: rgba(255,255,255,0.06);
     }
 
     /* White pill CTA button */
@@ -1822,19 +1809,11 @@
 
 <!-- ══════════════════════════════════════════════ NAVBAR -->
 <nav class="navbar">
-  <div class="container">
+  <div class="nav-pill">
     <a class="nav-logo" href="#">
       <img src="images/fin-3d.png" class="nav-logo-img" alt="Fin">
       Fin
     </a>
-
-    <div class="nav-links-pill">
-      <a href="#">Recursos</a>
-      <a href="#">Preços</a>
-      <a href="#">Blog</a>
-      <a href="#">Contato</a>
-    </div>
-
     <a class="btn-pill-white" href="#">Comece sua jornada</a>
   </div>
 </nav>

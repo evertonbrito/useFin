@@ -1843,6 +1843,155 @@
       height: 12px;
       background: rgba(255,255,255,0.15);
     }
+
+    /* ══════════════════════════════════════════════════════
+       RESPONSIVIDADE MOBILE
+    ══════════════════════════════════════════════════════ */
+    @media (max-width: 768px) {
+
+      /* ── Utilitários ── */
+      .container {
+        padding: 0 20px;
+      }
+
+      /* ── Navbar ── */
+      .navbar {
+        top: 12px;
+      }
+      .nav-pill {
+        gap: 12px;
+        padding: 6px 6px 6px 14px;
+      }
+      .btn-pill-white span {
+        font-size: 13px;
+      }
+      .btn-pill-white {
+        padding: 8px 16px;
+      }
+
+      /* ── Hero ── */
+      .hero-content {
+        padding: 0 20px;
+        padding-top: 100px;
+      }
+      .hero-badge-wrap {
+        margin-bottom: 20px;
+      }
+      .hero-ctas {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        width: 100%;
+        max-width: 320px;
+        margin: 0 auto;
+      }
+      .btn-pill-dark {
+        text-align: center;
+        justify-content: center;
+      }
+
+      /* ── About ── */
+      .section-about {
+        padding: 80px 0;
+      }
+
+      /* ── Features illustrations ── */
+      .section-feat-illus {
+        padding: 80px 0;
+      }
+      .feat-illus-row {
+        grid-template-columns: 1fr;
+      }
+      .feat-illus-item {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding: 32px 24px;
+      }
+      .feat-illus-item:last-child {
+        border-bottom: none;
+      }
+
+      /* ── Walkthrough ── */
+      .section-walkthrough {
+        padding: 80px 0 100px;
+      }
+      .wt-pair,
+      .wt-pair--flip {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        padding: 60px 0;
+      }
+      .wt-pair--flip .wt-item {
+        order: -1;
+      }
+
+      /* ── Features icons ── */
+      .section-feat-icons {
+        padding: 80px 0;
+      }
+      .feat-icons-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .feat-icon-cell {
+        padding: 24px 20px;
+      }
+
+      /* ── FAQ ── */
+      .section-faq {
+        padding: 80px 0;
+      }
+      .faq-heading {
+        font-size: clamp(28px, 7vw, 40px);
+      }
+
+      /* ── CTA ── */
+      .section-cta {
+        height: auto;
+        padding: 80px 20px;
+      }
+      .cta-btns {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+      .cta-heading {
+        font-size: clamp(28px, 7vw, 48px) !important;
+      }
+
+      /* ── Integrations ── */
+      .section-integrations {
+        padding: 80px 0;
+      }
+      .integrations-wrap {
+        grid-template-columns: 1fr;
+        gap: 48px;
+        text-align: center;
+      }
+      .integrations-text h2 {
+        font-size: clamp(26px, 7vw, 40px);
+      }
+      .orbit-stage {
+        width: 300px;
+        height: 300px;
+        overflow: hidden;
+        margin: 0 auto;
+      }
+
+      /* ── Footer ── */
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 36px;
+      }
+      .footer-grid > div:first-child {
+        grid-column: 1 / -1;
+      }
+      .footer-bottom {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+      }
+      .footer-sep { display: none; }
+    }
   </style>
 </head>
 <body>

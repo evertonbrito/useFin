@@ -153,53 +153,66 @@
       object-fit: contain;
     }
 
-    /* ─── RAINBOW BUTTON ────────────────────────────────── */
-    @keyframes rainbow {
-      0%   { background-position: 0%; }
-      100% { background-position: 200%; }
-    }
-
+    /* ─── PRIMARY BUTTON ────────────────────────────────── */
     .btn-pill-white {
       display: inline-flex;
       align-items: center;
       gap: 8px;
       padding: 10px 22px;
       border-radius: 9999px;
-      background: #fff;
+      background: transparent;
       color: #111;
       font-size: 14px;
       font-weight: 600;
       font-family: var(--font);
-      border: 1px solid rgba(0,0,0,0.06);
+      border: none;
       cursor: pointer;
       white-space: nowrap;
       position: relative;
-      isolation: isolate;
+      overflow: hidden;
       transition: opacity 0.2s;
     }
 
+    /* spinning conic border — clipped by overflow:hidden */
     .btn-pill-white::before {
       content: '';
       position: absolute;
-      bottom: -6px;
-      left: -8%;
-      right: -8%;
-      height: 14px;
-      border-radius: 9999px;
-      background: linear-gradient(
-        90deg,
-        hsl(90 100% 60%),
-        hsl(55 100% 60%),
-        hsl(30 100% 60%),
-        hsl(0 100% 63%),
-        hsl(300 100% 63%),
-        hsl(90 100% 60%)
+      width: 200%;
+      height: 200%;
+      top: -50%;
+      left: -50%;
+      background: conic-gradient(
+        from 0deg,
+        transparent 0deg,
+        transparent 140deg,
+        rgba(167,139,250,0) 170deg,
+        rgba(167,139,250,0.9) 205deg,
+        rgba(56,189,248,1) 230deg,
+        rgba(52,211,153,0.9) 255deg,
+        rgba(52,211,153,0) 290deg,
+        transparent 320deg,
+        transparent 360deg
       );
-      background-size: 200%;
-      animation: rainbow 3s linear infinite;
-      filter: blur(10px);
-      opacity: 0.65;
-      z-index: -1;
+      animation: ai-border-spin 3.2s linear infinite;
+      filter: blur(1px);
+      z-index: 0;
+    }
+
+    /* white inner fill — sits above ::before, below text */
+    .btn-pill-white::after {
+      content: '';
+      position: absolute;
+      inset: 1.5px;
+      border-radius: 9999px;
+      background: #fff;
+      z-index: 1;
+    }
+
+    /* text above both layers */
+    .btn-pill-white span,
+    .btn-pill-white svg {
+      position: relative;
+      z-index: 2;
     }
 
     .btn-pill-white:hover { opacity: 0.9; }
@@ -1846,7 +1859,7 @@
       <img src="images/fin-3d.png" class="nav-logo-img" alt="Fin">
       Fin
     </a>
-    <a class="btn-pill-white" href="#">Comece sua jornada</a>
+    <a class="btn-pill-white" href="#"><span>Comece sua jornada</span></a>
   </div>
 </nav>
 
@@ -1880,7 +1893,7 @@
     </p>
 
     <div class="hero-ctas">
-      <a class="btn-pill-white" href="#">Comece seu teste grátis</a>
+      <a class="btn-pill-white" href="#"><span>Comece seu teste grátis</span></a>
       <a class="btn-pill-dark" href="#">Saiba mais</a>
     </div>
   </div>
@@ -2259,7 +2272,7 @@
   <div class="cta-content">
     <h2 class="cta-heading">Pronto para organizar suas <em>finanças?</em></h2>
     <div class="cta-btns">
-      <a class="btn-pill-white" href="#">Comece seu teste grátis</a>
+      <a class="btn-pill-white" href="#"><span>Comece seu teste grátis</span></a>
       <a class="btn-pill-dark" href="#">Saiba mais</a>
     </div>
   </div>

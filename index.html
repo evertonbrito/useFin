@@ -39,16 +39,36 @@
 
     /* Section spacing handled by each section's padding */
 
+    /* ── Scroll progress bar ── */
+    .scroll-progress {
+      position: fixed;
+      right: 0; top: 0;
+      width: 2px; height: 100%;
+      z-index: 200;
+      background: rgba(255,255,255,0.04);
+      pointer-events: none;
+    }
+    .scroll-progress-fill {
+      width: 100%;
+      height: 0%;
+      background: linear-gradient(to bottom, #6366f1, #a78bfa, #38bdf8);
+      transition: height 0.08s linear;
+      border-radius: 0 0 2px 2px;
+    }
+
     /* ── Section entrance ── */
     section:not(.hero) {
       opacity: 0;
-      transform: translateY(36px);
-      transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1),
-                  transform 0.9s cubic-bezier(0.16,1,0.3,1);
+      transform: translateY(44px) scale(0.985);
+      filter: blur(3px);
+      transition: opacity 1s cubic-bezier(0.16,1,0.3,1),
+                  transform 1s cubic-bezier(0.16,1,0.3,1),
+                  filter 0.8s cubic-bezier(0.16,1,0.3,1);
     }
     section:not(.hero).sec-in {
       opacity: 1;
-      transform: translateY(0);
+      transform: translateY(0) scale(1);
+      filter: blur(0px);
     }
 
     :root {
@@ -110,19 +130,17 @@
       flex-shrink: 0;
     }
 
-    /* 4-square grid icon (2×2 white squares) */
-    .logo-icon {
-      width: 19px;
-      height: 20px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      grid-template-rows: 1fr 1fr;
-      gap: 1px;
+    .nav-logo-img {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+      flex-shrink: 0;
     }
 
-    .logo-icon span {
-      background: #fff;
-      border-radius: 1px;
+    .orbit-logo-img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
     }
 
     .nav-links-pill {
@@ -447,13 +465,19 @@
       flex-direction: column;
       gap: 0;
       background: #000;
-      transition: background 0.4s ease;
+      transition: background 0.35s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s ease, border-color 0.3s ease;
       cursor: default;
     }
 
     .feat-illus-item:last-child { border-right: none; }
 
-    .feat-illus-item:hover { background: #111; }
+    .feat-illus-item:hover {
+      background: #111;
+      transform: translateY(-5px);
+      box-shadow: 0 24px 48px rgba(0,0,0,0.5);
+      border-color: rgba(255,255,255,0.1);
+      z-index: 1;
+    }
 
     .feat-illus-icon {
       width: 100%;
@@ -610,16 +634,19 @@
 
     /* ─── WALKTHROUGH ────────────────────────────────────── */
     .section-walkthrough {
-      padding: 120px 0 160px;
+      padding: 140px 0 180px;
       background: #000;
     }
 
+    /* Each pair is a centered spotlight block */
     .wt-pair {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 96px;
+      grid-template-columns: 5fr 7fr;
+      gap: 80px;
       align-items: center;
-      padding: 80px 0;
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 160px 0;
     }
 
     .wt-pair + .wt-pair {
@@ -627,24 +654,24 @@
     }
 
     .wt-pair--flip .wt-illus { order: -1; }
+    .wt-pair--flip { grid-template-columns: 7fr 5fr; }
 
     .wt-text {
       display: flex;
       flex-direction: column;
-      max-width: 480px;
     }
 
     .wt-item-title {
-      font-size: clamp(30px, 3.2vw, 48px);
+      font-size: clamp(28px, 2.6vw, 40px);
       font-weight: 500;
       letter-spacing: -0.025em;
-      line-height: 1.12;
-      margin-bottom: 22px;
+      line-height: 1.15;
+      margin-bottom: 20px;
       color: var(--text);
     }
 
     .wt-item-desc {
-      font-size: 17px;
+      font-size: 16px;
       font-weight: 400;
       color: var(--text-dim);
       line-height: 1.7;
@@ -1080,6 +1107,15 @@
       display: flex;
       flex-direction: column;
       gap: 14px;
+      transition: background 0.3s ease, border-color 0.3s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s ease;
+    }
+
+    .feat-icon-cell:hover {
+      background: rgba(255,255,255,0.03);
+      border-color: rgba(255,255,255,0.1);
+      transform: translateY(-3px);
+      box-shadow: 0 16px 36px rgba(0,0,0,0.4);
+      z-index: 1;
     }
 
     .feat-icon-cell:nth-child(1) { border-radius: 16px 0 0 0; }
@@ -1380,6 +1416,11 @@
 
     .faq-item {
       border-bottom: 1px solid var(--border);
+      transition: background 0.25s ease;
+    }
+
+    .faq-item:hover {
+      background: rgba(255,255,255,0.02);
     }
 
     .faq-item:last-child { border-bottom: none; }
@@ -1445,18 +1486,18 @@
     /* ─── CTA ────────────────────────────────────────────── */
     .section-cta {
       position: relative;
-      height: 500px;
+      height: 560px;
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
+      background: #000;
     }
 
     /* Video background */
     .cta-bg {
       position: absolute;
       inset: 0;
-      background: #000;
     }
 
     .cta-video {
@@ -1468,17 +1509,31 @@
       object-position: center;
     }
 
-    /* Subtle dark overlay so text stays readable */
+    /* Top fade: black → transparent */
+    .cta-bg::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 48%;
+      background: linear-gradient(to bottom, #000 0%, transparent 100%);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Bottom fade: transparent → black */
     .cta-bg::after {
       content: '';
       position: absolute;
-      inset: 0;
-      background: rgba(0,0,0,0.35);
+      bottom: 0; left: 0; right: 0;
+      height: 48%;
+      background: linear-gradient(to top, #000 0%, transparent 100%);
+      z-index: 1;
+      pointer-events: none;
     }
 
     .cta-content {
       position: relative;
-      z-index: 2;
+      z-index: 4;
       text-align: center;
     }
 
@@ -1611,9 +1666,6 @@
       z-index: 3;
       backdrop-filter: blur(6px);
     }
-    .orbit-center .logo-icon {
-      width: 26px; height: 26px; gap: 4px;
-    }
     .orb-wrap {
       position: absolute;
       width: 0; height: 0;
@@ -1732,14 +1784,16 @@
 </head>
 <body>
 
+<!-- Scroll progress -->
+<div class="scroll-progress" aria-hidden="true">
+  <div class="scroll-progress-fill" id="scroll-progress-fill"></div>
+</div>
+
 <!-- ══════════════════════════════════════════════ NAVBAR -->
 <nav class="navbar">
   <div class="container">
     <a class="nav-logo" href="#">
-      <div class="logo-icon">
-        <span></span><span></span>
-        <span></span><span></span>
-      </div>
+      <img src="images/fin-3d.png" class="nav-logo-img" alt="Fin">
       Fin
     </a>
 
@@ -2076,54 +2130,6 @@
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════════ CASE STUDIES -->
-<section class="section-case-studies">
-  <div class="container">
-    <h2 class="case-heading">Veja o que nossos usuários<br>estão conseguindo com o Fin</h2>
-
-    <!-- Case 1: text LEFT, image RIGHT -->
-    <div class="case-item">
-      <div class="case-text">
-        <p class="case-quote">"Finalmente entendi para onde ia o meu dinheiro todo mês. O Fin me mostrou que eu gastava R$800 por mês em delivery sem perceber."</p>
-        <div class="case-stats">
-          <div>
-            <div class="case-stat-value">R$1.250</div>
-            <div class="case-stat-label">Economizados/mês</div>
-          </div>
-          <div>
-            <div class="case-stat-value">3 meses</div>
-            <div class="case-stat-label">Para a meta</div>
-          </div>
-        </div>
-      </div>
-      <div class="case-img">
-        <img src="images/case-study-1.png" alt="Usuário Fin - economia mensal" />
-      </div>
-    </div>
-
-    <!-- Case 2: image LEFT, text RIGHT -->
-    <div class="case-item reverse">
-      <div class="case-text">
-        <p class="case-quote">"Eu tentei vários apps de finanças, mas o Fin foi o único que realmente aprende como eu gasto. Não preciso categorizar mais nada manualmente."</p>
-        <div class="case-stats">
-          <div>
-            <div class="case-stat-value">-40%</div>
-            <div class="case-stat-label">Gastos supérfluos</div>
-          </div>
-          <div>
-            <div class="case-stat-value">+2h</div>
-            <div class="case-stat-label">Livres por semana</div>
-          </div>
-        </div>
-      </div>
-      <div class="case-img">
-        <img src="images/case-study-2.png" alt="Usuário Fin - categorização automática" />
-      </div>
-    </div>
-
-  </div>
-</section>
-
 <!-- ══════════════════════════════════════════════ NEXT-GEN CARDS -->
 
 <!-- ══════════════════════════════════════════════ FAQ -->
@@ -2203,7 +2209,7 @@
 <section class="section-cta">
   <div class="cta-bg">
     <video class="cta-video" autoplay muted loop playsinline>
-      <source src="images/cta-bg.mp4" type="video/mp4" />
+      <source src="images/hero-bg.mp4" type="video/mp4" />
     </video>
   </div>
   <div class="cta-content">
@@ -2262,9 +2268,7 @@
 
       <!-- Center: Fin logo -->
       <div class="orbit-center">
-        <div class="logo-icon">
-          <span></span><span></span><span></span><span></span>
-        </div>
+        <img src="images/fin-3d.png" class="orbit-logo-img" alt="Fin">
       </div>
 
       <!-- ── Inner orbit: CW, 20s, r=100px ── -->
@@ -2363,10 +2367,7 @@
 
       <div>
         <div class="footer-brand-logo">
-          <div class="logo-icon">
-            <span></span><span></span>
-            <span></span><span></span>
-          </div>
+          <img src="images/fin-3d.png" class="nav-logo-img" alt="Fin">
           Fin
         </div>
         <p class="footer-tagline">Assistente financeiro com IA para controle de gastos e economias pessoais.</p>
@@ -2556,8 +2557,8 @@
       y: 18, dur: 680, blur: false, scale: false, stagger: 60  },
     { sel: '.case-item',
       y: 22, dur: 720, blur: false, scale: false, stagger: 100 },
-    { sel: '.wt-item',
-      y: 20, dur: 680, blur: false, scale: false, stagger: 140 },
+    { sel: '.wt-text',
+      y: 20, dur: 680, blur: true,  scale: false, stagger: 0   },
     { sel: '.orbit-stage',
       y: 30, dur: 800, blur: false, scale: false, stagger: 0   },
   ];
@@ -2745,6 +2746,19 @@
   }, { threshold: 0.5 });   // 50% do card visível antes de disparar
 
   featCards.forEach(c => microObs.observe(c));
+
+  // ── Scroll progress bar ───────────────────────────────
+  const progressFill = document.getElementById('scroll-progress-fill');
+  if (progressFill) {
+    const updateProgress = () => {
+      const total = document.documentElement.scrollHeight - window.innerHeight;
+      const pct   = total > 0 ? (window.scrollY / total) * 100 : 0;
+      progressFill.style.height = pct + '%';
+    };
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    updateProgress();
+  }
+
 </script>
 
 </body>

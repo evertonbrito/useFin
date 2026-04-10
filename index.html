@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fin — Assistente financeiro com IA para organizar seus gastos</title>
+  <title>Fin - Seu assistente financeiro com IA</title>
   <link rel="icon" type="image/svg+xml" href="images/fin-gato.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -160,13 +160,14 @@
       justify-content: center;
       gap: 8px;
       padding: 10px 22px;
+      min-height: 44px;
       border-radius: 9999px;
       background: transparent;
       color: #111;
       font-size: 14px;
       font-weight: 600;
       font-family: var(--font);
-      border: none;
+      border: 1px solid transparent;
       cursor: pointer;
       white-space: nowrap;
       position: relative;
@@ -221,8 +222,10 @@
     .btn-pill-dark {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 8px;
       padding: 10px 22px;
+      min-height: 44px;
       border-radius: 9999px;
       background: rgba(255,255,255,0.1);
       color: var(--text);
@@ -1741,7 +1744,7 @@
     .orb-icon {
       position: absolute;
       width: 46px; height: 46px;
-      top: calc(-1 * var(--r) - 23px);
+      top: calc(var(--r) - 23px);
       left: -23px;
       border-radius: 13px;
       border: 1px solid rgba(255,255,255,0.11);
@@ -1863,7 +1866,8 @@
         gap: 12px;
         padding: 6px 6px 6px 14px;
       }
-      .btn-pill-white span {
+      .btn-pill-white span,
+      .btn-pill-dark {
         font-size: 13px;
       }
       .btn-pill-white {
@@ -1885,6 +1889,12 @@
         width: 100%;
         max-width: 320px;
         margin: 0 auto;
+      }
+      .hero-ctas .btn-pill-white,
+      .hero-ctas .btn-pill-dark {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
       }
       .btn-pill-dark {
         text-align: center;
@@ -1924,6 +1934,14 @@
       }
       .wt-pair--flip .wt-item {
         order: -1;
+      }
+      .wt-illus-frame {
+        overflow: visible;
+        border-radius: 20px;
+      }
+      .wt-chat-messages {
+        overflow: visible;
+        padding: 0 4px;
       }
 
       /* ── Features icons ── */
@@ -1965,9 +1983,11 @@
         max-width: 320px;
         margin: 0 auto;
       }
+      .cta-btns .btn-pill-white,
       .cta-btns .btn-pill-dark {
-        text-align: center;
+        width: 100%;
         justify-content: center;
+        text-align: center;
       }
       .cta-heading {
         font-size: clamp(28px, 7vw, 48px) !important;
@@ -1985,11 +2005,21 @@
       .integrations-text h2 {
         font-size: clamp(26px, 7vw, 40px);
       }
-      .orbit-stage {
-        transform: scale(0.78);
-        transform-origin: center center;
-        margin: -42px auto;
+      .section-integrations {
+        overflow: hidden;
       }
+      .integrations-wrap {
+        overflow: hidden;
+      }
+      .orbit-stage {
+        width: 340px;
+        height: 340px;
+        margin: 0 auto;
+        overflow: hidden;
+      }
+      /* Reduzir raios das órbitas proporcionalmente (340/380 = 0.895) */
+      .orb-wrap:not(.orb-rev) { --r: 90px !important; }
+      .orb-rev                  { --r: 150px !important; }
 
       /* ── Footer ── */
       .footer-grid {

@@ -1406,11 +1406,41 @@
       line-height: 1.1;
     }
 
+    /* FAQ animated border wrap */
+    .faq-card-wrap {
+      position: relative;
+      border-radius: 18px;
+      padding: 1.5px;
+      overflow: hidden;
+    }
+    .faq-card-wrap::before {
+      content: '';
+      position: absolute;
+      width: 200%; height: 200%;
+      top: -50%; left: -50%;
+      background: conic-gradient(
+        from 0deg,
+        transparent 0deg,
+        transparent 120deg,
+        rgba(167,139,250,0) 160deg,
+        rgba(167,139,250,0.85) 200deg,
+        rgba(56,189,248,1)    225deg,
+        rgba(52,211,153,0.85) 255deg,
+        rgba(52,211,153,0)    290deg,
+        transparent 330deg,
+        transparent 360deg
+      );
+      animation: ai-border-spin 4s linear infinite;
+      filter: blur(2px);
+    }
+
     /* All questions in ONE dark rounded card */
     .faq-card {
+      position: relative;
+      z-index: 1;
       background: #0d0d0d;
       border-radius: 16px;
-      border: 1px solid var(--border);
+      border: none;
       overflow: hidden;
     }
 
@@ -2138,6 +2168,7 @@
     <div class="faq-inner">
       <h2 class="faq-heading">Perguntas frequentes</h2>
 
+      <div class="faq-card-wrap">
       <div class="faq-card">
 
         <div class="faq-item">
@@ -2201,6 +2232,7 @@
         </div>
 
       </div>
+      </div><!-- end faq-card-wrap -->
     </div>
   </div>
 </section>
